@@ -1,0 +1,378 @@
+{% extends 'reservations/base.html' %}
+{% load static %}
+
+{% block title %}Mes réservations - Trans{% endblock %}
+
+{% block content %}
+<div class="my-reservations-container">
+    <div class="reservations-header">
+        <h1><i class="fas fa-ticket-alt"></i> Mes réservations</h1>
+        <div class="header-actions">
+            <a href="{% url 'reservations:search_trips' %}" class="btn-new-search">
+                <i class="fas fa-search"></i> Nouvelle recherche
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <i class="fas 
+                {% if message.tags == 'success' %}fa-check-circle
+                {% elif message.tags == 'error' %}fa-times-circle
+                {% elif message.tags == 'warning' %}fa-exclamation-triangle
+                {% else %}fa-info-circle{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if reservations %}
+    <div class="reservations-list">
+        {% for reservation in reservations %}
+        <div class="reservation-card {% if reservation.statut == 'annule' %}cancelled{% endif %}">
+            <div class="reservation-header">
+                <span class="reservation-number">Réservation #{{ reservation.numero_reservation }}</span>
+                <span class="reservation-status {{ reservation.statut }}">
+                    {{ reservation.get_statut_display }}
+                </span>
+            </div>
+            
+            <div class="voyage-info">
+                <div class="route">
+                    <span class="city-departure">{{ reservation.id_voyage.id_ligne.ville_depart.nom_ville }}</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <span class="city-arrival">{{ reservation.id_voyage.id_ligne.ville_arrivee.nom_ville }}</span>
+                </div>
+                <div class="voyage-date">
+                    <i class="far fa-calendar-alt"></i> {{ reservation.id_voyage.date_voyage|date:"l d F Y" }}
+                    <i class="far fa-clock"></i> {{ reservation.id_voyage.heure_depart }}
+                </div>
+            </div>
+            
+            <div class="reservation-details">
+                <div class="detail-item">
+                    <span class="detail-label">Places :</span>
+                    <span class="detail-value">{{ reservation.nombre_places }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Prix total :</span>
+                    <span class="detail-value">{{ reservation.prix_total }} F CFA</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Date réservation :</span>
+                    <span class="detail-value">{{ reservation.date_reservation|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+            
+            <div class="reservation-actions">
+                {% if reservation.statut != 'annule' %}
+                <a href="{% url 'reservations:cancel_reservation' reservation.id_reservation %}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+                {% endif %}
+                <a href="#" class="btn-details">
+                    <i class="fas fa-info-circle"></i> Détails
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-reservations">
+        <i class="far fa-calendar-times"></i>
+        <p>Vous n'avez aucune réservation active</p>
+        <a href="{% url 'reservations:search_trips' %}" class="btn-primary">
+            <i class="fas fa-search"></i> Rechercher un voyage
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .my-reservations-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .reservations-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .reservations-header h1 {
+        color: #2c3e50;
+        font-size: 1.8rem;
+        margin: 0;
+    }
+    
+    .reservations-header i {
+        margin-right: 10px;
+        color: #3498db;
+    }
+    
+    .btn-new-search {
+        padding: 0.5rem 1rem;
+        background-color: #27ae60;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-new-search:hover {
+        background-color: #219955;
+    }
+    
+    .btn-new-search i {
+        margin-right: 8px;
+    }
+    
+    .messages-container {
+        margin-bottom: 2rem;
+    }
+    
+    .alert {
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .alert i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+    
+    .alert-success {
+        background-color: #d5f5e3;
+        color: #27ae60;
+    }
+    
+    .alert-error {
+        background-color: #fadbd8;
+        color: #e74c3c;
+    }
+    
+    .alert-warning {
+        background-color: #fef9e7;
+        color: #f39c12;
+    }
+    
+    .alert-info {
+        background-color: #d6eaf8;
+        color: #3498db;
+    }
+    
+    .reservations-list {
+        display: grid;
+        gap: 1.5rem;
+    }
+    
+    .reservation-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        border-left: 4px solid #3498db;
+    }
+    
+    .reservation-card.cancelled {
+        opacity: 0.7;
+        border-left-color: #e74c3c;
+    }
+    
+    .reservation-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .reservation-number {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .reservation-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .reservation-status.confirme {
+        background-color: #d5f5e3;
+        color: #27ae60;
+    }
+    
+    .reservation-status.annule {
+        background-color: #fadbd8;
+        color: #e74c3c;
+    }
+    
+    .reservation-status.en_attente {
+        background-color: #fef9e7;
+        color: #f39c12;
+    }
+    
+    .voyage-info {
+        margin-bottom: 1.5rem;
+    }
+    
+    .route {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    
+    .route i {
+        margin: 0 0.5rem;
+        color: #3498db;
+    }
+    
+    .voyage-date {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .voyage-date i {
+        margin-right: 0.3rem;
+    }
+    
+    .reservation-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .detail-label {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin-bottom: 0.3rem;
+    }
+    
+    .detail-value {
+        font-weight: 500;
+    }
+    
+    .reservation-actions {
+        display: flex;
+        gap: 1rem;
+    }
+    
+    .btn-cancel, .btn-details {
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-cancel {
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    .btn-cancel:hover {
+        background-color: #c0392b;
+    }
+    
+    .btn-details {
+        background-color: #3498db;
+        color: white;
+    }
+    
+    .btn-details:hover {
+        background-color: #2980b9;
+    }
+    
+    .btn-cancel i, .btn-details i {
+        margin-right: 8px;
+    }
+    
+    .no-reservations {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .no-reservations i {
+        font-size: 3rem;
+        color: #bdc3c7;
+        margin-bottom: 1rem;
+    }
+    
+    .no-reservations p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-primary {
+        padding: 0.75rem 1.5rem;
+        background-color: #3498db;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-primary:hover {
+        background-color: #2980b9;
+    }
+    
+    .btn-primary i {
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .reservations-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .reservation-details {
+            grid-template-columns: 1fr;
+        }
+        
+        .reservation-actions {
+            flex-direction: column;
+        }
+        
+        .btn-cancel, .btn-details {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}

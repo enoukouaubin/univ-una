@@ -1,0 +1,84 @@
+% Configuring document class and geometry
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+
+% Setting up headers and footers
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Trans - Reçu de Ticket}
+\fancyhead[R]{\today}
+\fancyfoot[C]{Page \thepage\ sur \pageref{LastPage}}
+
+% Defining custom colors
+\definecolor{headercolor}{RGB}{0, 51, 102}
+
+% Beginning document
+\begin{document}
+
+% Creating title section
+\begin{center}
+    {\Large \textbf{Reçu de Ticket - Trans}} \\
+    \vspace{0.2cm}
+    {\color{headercolor}\rule{\textwidth}{2pt}}
+\end{center}
+
+% Adding reservation and ticket details
+\section*{Détails de la Réservation}
+\begin{tabular}{ll}
+    \textbf{Numéro de Réservation} & reservation_number \\
+    \textbf{Numéro de Ticket} & ticket_number \\
+    \textbf{Client} & client_name \\
+    \textbf{Email} & client_email \\
+    \textbf{Téléphone} & client_phone \\
+\end{tabular}
+
+\section*{Détails du Voyage}
+\begin{tabular}{ll}
+    \textbf{Ville de Départ} & departure_city \\
+    \textbf{Ville d'Arrivée} & arrival_city \\
+    \textbf{Date du Voyage} & travel_date \\
+    \textbf{Heure de Départ} & departure_time \\
+    \textbf{Heure d'Arrivée Prévue} & arrival_time \\
+    \textbf{Nombre de Places} & number_of_seats \\
+    \textbf{Type de Place} & seat_type \\
+\end{tabular}
+
+% Adding passenger details
+\section*{Passagers}
+\begin{itemize}
+    \passenger_list
+\end{itemize}
+
+% Adding pricing details
+\section*{Détails Financiers}
+\begin{tabular}{ll}
+    \textbf{Prix Unitaire} & unit_price F CFA \\
+    \textbf{Prix Total} & total_price F CFA \\
+\end{tabular}
+
+% Adding ticket status and issuance
+\section*{Statut}
+\begin{tabular}{ll}
+    \textbf{Statut du Ticket} & ticket_status \\
+    \textbf{Date d'Émission} & issuance_date \\
+\end{tabular}
+
+% Adding footer note
+\vspace{1cm}
+\begin{center}
+    \textit{Merci d'avoir choisi Trans pour votre voyage !} \\
+    \small{Contactez-nous à support@trans.com pour toute question.}
+\end{center}
+
+% Ending document
+\end{document}

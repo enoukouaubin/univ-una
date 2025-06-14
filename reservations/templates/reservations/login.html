@@ -1,0 +1,295 @@
+{% extends 'reservations/base.html' %}
+{% load static %}
+
+{% block title %}{% if form_type == 'register' %}Inscription{% else %}Connexion{% endif %} - Trans{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card {% if form_type == 'register' %}register-card{% else %}login-card{% endif %}">
+        <div class="auth-header">
+            <h1>
+                <i class="fas {% if form_type == 'register' %}fa-user-plus{% else %}fa-sign-in-alt{% endif %}"></i> 
+                {% if form_type == 'register' %}Inscription{% else %}Connexion{% endif %}
+            </h1>
+            <p>
+                {% if form_type == 'register' %}
+                    Créez votre compte pour réserver vos voyages
+                {% else %}
+                    Accédez à votre espace personnel
+                {% endif %}
+            </p>
+        </div>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            {% if form_type == 'register' %}
+            <!-- Formulaire d'inscription avec deux colonnes -->
+            <div class="form-columns">
+                <!-- Colonne de gauche : Nom, Prénom, Email -->
+                <div class="form-left">
+                    {% for field in form %}
+                        {% if field.name in 'nom,prenom,email' %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                            <small class="form-help">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                            <div class="form-error">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <!-- Colonne de droite : Téléphone, Mot de passe, Confirmer le mot de passe -->
+                <div class="form-right">
+    {% for field in form %}
+        {% if field.name in 'telephone,password,password2,password1,password_confirm,confirm_password' %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <small class="form-help">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <div class="form-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endfor %}
+ </div>
+            </div>
+            {% else %}
+            <!-- Formulaire de connexion -->
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-help">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <div class="form-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="form-options">
+                <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="auth-btn">
+                    {% if form_type == 'register' %}S'inscrire{% else %}Se connecter{% endif %}
+                </button>
+            </div>
+
+            <div class="auth-footer">
+                {% if form_type == 'register' %}
+                    <p>Déjà inscrit ? <a href="{% url 'reservations:login' %}">Connectez-vous</a></p>
+                {% else %}
+                    <p>Pas de compte ? <a href="{% url 'reservations:register' %}">Inscrivez-vous</a></p>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+        padding: 2rem;
+        background-color: #f5f7fa;
+    }
+    
+    .auth-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 800px; /* Augmenté pour les deux colonnes */
+        overflow: hidden;
+    }
+    
+    .register-card {
+        border-top: 4px solid #27ae60;
+    }
+    
+    .login-card {
+        border-top: 4px solid #3498db;
+    }
+    
+    .auth-header {
+        text-align: center;
+        padding: 2rem 2rem 1rem;
+    }
+    
+    .auth-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .auth-header p {
+        color: #7f8c8d;
+        margin: 0.5rem 0 0;
+    }
+    
+    .auth-header i {
+        margin-right: 10px;
+    }
+    
+    .auth-form {
+        padding: 1rem 2rem 2rem;
+    }
+    
+    .form-columns {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-left, .form-right {
+        flex: 1;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+    }
+    
+    .form-help {
+        display: block;
+        margin-top: 0.4rem;
+        color: #7f8c8d;
+        font-size: 0.85rem;
+    }
+    
+    .form-error {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-top: 0.4rem;
+    }
+    
+    .form-options {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1rem;
+    }
+    
+    .forgot-password {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        text-decoration: none;
+    }
+    
+    .forgot-password:hover {
+        color: #3498db;
+        text-decoration: underline;
+    }
+    
+    .form-actions {
+        margin-top: 1.5rem;
+    }
+    
+    .auth-btn {
+        width: 100%;
+        padding: 1rem;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .register-card .auth-btn {
+        background-color: #27ae60;
+    }
+    
+    .auth-btn:hover {
+        background-color: #2980b9;
+    }
+    
+    .register-card .auth-btn:hover {
+        background-color: #219955;
+    }
+    
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #7f8c8d;
+    }
+    
+    .auth-footer a {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+        .auth-container {
+            padding: 1rem;
+        }
+        
+        .form-columns {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .auth-card {
+            max-width: 500px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .auth-container {
+            padding: 0.5rem;
+        }
+        
+        .auth-card {
+            padding-bottom: 1rem;
+        }
+        
+        .auth-form {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+{% endblock %}

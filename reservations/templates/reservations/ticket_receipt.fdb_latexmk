@@ -1,0 +1,18 @@
+# Fdb version 4
+["pdflatex"] 1749479330.48815 "ticket_receipt.tex" "ticket_receipt.pdf" "ticket_receipt" 1749486517.75197 2
+  "C:/Users/HP/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1749479352.90058 24223670 271e3e17b306acbe45dbb123f02fab5a ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/fonts/tfm/jknappen/ec/ecrm1200.tfm" 993062126 3152 4850ff0163852b7fab34bd55e1197f28 ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmr12.tfm" 1136765053 1288 655e228510b4c2a1abe905c368440826 ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/tex/latex/base/article.cls" 1705273579 20144 147463a6a579f4597269ef9565205cfe ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/tex/latex/base/fontenc.sty" 1705273578 5119 a04a8b68ab4f6ce800a41f7f8012a10e ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/tex/latex/base/inputenc.sty" 1705273578 5048 425739d70251273bf93e3d51f3c40048 ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/tex/latex/base/size12.clo" 1705273578 8449 f07039d8e4e89f21078d9b5137579bfc ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/tex/latex/geometry/geometry.sty" 1578053545 42759 e63af52ccddba7489ac0e17d6a3344bd ""
+  "C:/Users/HP/AppData/Local/Programs/MiKTeX/tex/latex/lm/lmodern.sty" 1430474546 1608 b00724785a9e9c599e5181bb8729160b ""
+  "ticket_receipt.aux" 1749479330.48046 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "ticket_receipt.tex" 1749473454.73884 2311 7bb21f500e243268b2d7f058f8198cfe ""
+  (generated)
+  "ticket_receipt.aux"
+  "ticket_receipt.log"
+  "ticket_receipt.pdf"
+  (rewritten before read)

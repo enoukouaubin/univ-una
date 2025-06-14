@@ -1,0 +1,285 @@
+{% extends 'reservations/base.html' %}
+{% load static %}
+
+{% block title %}Ticket - Trans{% endblock %}
+
+{% block content %}
+<div class="ticket-modal-container">
+    <div class="ticket-modal">
+        <div class="ticket-header">
+            <h2><i class="fas fa-ticket-alt"></i> Votre Ticket de Voyage</h2>
+            <div class="ticket-company">TRANS TRANSPORT</div>
+        </div>
+        
+        <div class="ticket-body">
+            <div class="ticket-info">
+                <div class="info-row">
+                    <div class="info-label">N° Ticket:</div>
+                    <div class="info-value">{{ ticket.numero_ticket }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Passager:</div>
+                    <div class="info-value">{{ ticket.id_reservation.id_client.prenom }} {{ ticket.id_reservation.id_client.nom }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Trajet:</div>
+                    <div class="info-value voyage-route">
+                        <span class="ville-depart">{{ ticket.id_reservation.id_voyage.id_ligne.ville_depart.nom_ville }}</span>
+                        <i class="fas fa-arrow-right"></i>
+                        <span class="ville-arrivee">{{ ticket.id_reservation.id_voyage.id_ligne.ville_arrivee.nom_ville }}</span>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Date & Heure:</div>
+                    <div class="info-value">
+                        {{ ticket.id_reservation.id_voyage.date_voyage|date:"d/m/Y" }} à {{ ticket.id_reservation.id_voyage.heure_depart }}
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Siège:</div>
+                    <div class="info-value">{{ ticket.numero_place }}</div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Prix:</div>
+                    <div class="info-value">{{ ticket.id_reservation.prix_total }} F CFA</div>
+                </div>
+            </div>
+            
+            <div class="ticket-qrcode">
+                <img src="{% static 'reservations/images/qrcode-placeholder.png' %}" alt="QR Code" class="qrcode-img">
+                <p class="qrcode-text">Code de validation</p>
+            </div>
+        </div>
+        
+        <div class="ticket-footer">
+            <div class="ticket-terms">
+                <p>Présentez ce ticket au conducteur avant l'embarquement</p>
+                <p>Valable uniquement pour le voyage et la date indiqués</p>
+            </div>
+            
+            <div class="ticket-actions">
+                <button onclick="window.print()" class="btn-print">
+                    <i class="fas fa-print"></i> Imprimer
+                </button>
+                <a href="{% url 'reservations:home' %}" class="btn-close">
+                    <i class="fas fa-times"></i> Fermer
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ticket-modal-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 2rem;
+        background-color: #f5f7fa;
+    }
+    
+    .ticket-modal {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        width: 100%;
+        max-width: 700px;
+        overflow: hidden;
+    }
+    
+    .ticket-header {
+        background: linear-gradient(135deg, #3498db, #2c3e50);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+        position: relative;
+    }
+    
+    .ticket-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .ticket-header i {
+        margin-right: 10px;
+    }
+    
+    .ticket-company {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        opacity: 0.7;
+    }
+    
+    .ticket-body {
+        display: flex;
+        padding: 2rem;
+    }
+    
+    .ticket-info {
+        flex: 1;
+        padding-right: 2rem;
+    }
+    
+    .info-row {
+        display: flex;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px dashed #eee;
+    }
+    
+    .info-label {
+        font-weight: bold;
+        width: 120px;
+        color: #7f8c8d;
+    }
+    
+    .info-value {
+        flex: 1;
+    }
+    
+    .voyage-route {
+        display: flex;
+        align-items: center;
+    }
+    
+    .voyage-route i {
+        margin: 0 10px;
+        color: #3498db;
+    }
+    
+    .ticket-qrcode {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-left: 1px dashed #ddd;
+        padding-left: 2rem;
+    }
+    
+    .qrcode-img {
+        width: 150px;
+        height: 150px;
+        background: #f8f9fa;
+        border: 1px solid #eee;
+        padding: 10px;
+    }
+    
+    .qrcode-text {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        text-align: center;
+    }
+    
+    .ticket-footer {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-top: 1px solid #eee;
+    }
+    
+    .ticket-terms {
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .ticket-terms p {
+        margin: 0.3rem 0;
+    }
+    
+    .ticket-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    
+    .btn-print, .btn-close {
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-print {
+        background: #3498db;
+        color: white;
+        border: none;
+    }
+    
+    .btn-print:hover {
+        background: #2980b9;
+    }
+    
+    .btn-close {
+        background: #e74c3c;
+        color: white;
+        border: none;
+    }
+    
+    .btn-close:hover {
+        background: #c0392b;
+    }
+    
+    .btn-print i, .btn-close i {
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .ticket-body {
+            flex-direction: column;
+            padding: 1.5rem;
+        }
+        
+        .ticket-info {
+            padding-right: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .ticket-qrcode {
+            border-left: none;
+            border-top: 1px dashed #ddd;
+            padding-left: 0;
+            padding-top: 1.5rem;
+        }
+        
+        .ticket-actions {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .btn-print, .btn-close {
+            justify-content: center;
+        }
+    }
+    
+    @media print {
+        .ticket-modal-container {
+            background: none;
+            padding: 0;
+        }
+        
+        .ticket-modal {
+            box-shadow: none;
+            border-radius: 0;
+        }
+        
+        .ticket-actions {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}

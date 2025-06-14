@@ -1,0 +1,87 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>
+{% extends 'reservations/base.html' %}
+
+{% load static %}
+{% load i18n %}
+{% block content %}
+<div class="container my-5">
+    <h2>{{ title }}</h2>
+    <form method="get" class="mb-4">
+        <div class="form-group">
+            <label for="date">Sélectionner une date :</label>
+            <input type="date" name="date" id="date" value="{{ selected_date|date:'Y-m-d' }}" class="form-control d-inline-block w-auto">
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+        </div>
+    </form>
+    {% if reservations %}
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Numéro de Réservation</th>
+                    <th>Client</th>
+                    <th>Voyage</th>
+                    <th>Nombre de Places</th>
+                    <th>Prix Total</th>
+                    <th>Statut</th>
+                    <th>Date de Réservation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                    <tr>
+                        <td>{{ reservation.numero_reservation }}</td>
+                        <td>{{ reservation.id_client.prenom }} {{ reservation.id_client.nom }}</td>
+                        <td>{{ reservation.id_voyage.id_ligne.ville_depart.nom_ville }} -> {{ reservation.id_voyage.id_ligne.ville_arrivee.nom_ville }}</td>
+                        <td>{{ reservation.nombre_places }}</td>
+                        <td>{{ reservation.prix_total }} F CFA</td>
+                        <td>{{ reservation.get_statut_display }}</td>
+                        <td>{{ reservation.date_reservation|date:'d/m/Y H:i' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucune réservation trouvée pour ce jour.</p>
+    {% endif %}
+    <a href="{% url 'reservations:admin_reservations_by_week' %}" class="btn btn-secondary">Voir par semaine</a>
+</div>
+{% endblock %}

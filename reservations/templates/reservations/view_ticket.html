@@ -1,0 +1,397 @@
+{% extends 'reservations/base.html' %}
+{% load static %}
+
+{% block title %}Ticket {{ ticket.numero_ticket }} - Trans{% endblock %}
+
+{% block content %}
+<div class="ticket-details-container">
+    <div class="ticket-header">
+        <h1><i class="fas fa-ticket-alt"></i> Détails du Ticket</h1>
+        <div class="ticket-number">N° {{ ticket.numero_ticket }}</div>
+    </div>
+
+    <div class="ticket-card">
+        <div class="ticket-section">
+            <div class="section-header">
+                <i class="fas fa-user-circle"></i>
+                <h2>Informations Passager</h2>
+            </div>
+            <div class="section-content">
+                <div class="info-row">
+                    <span class="info-label">Nom complet :</span>
+                    <span class="info-value">{{ ticket.nom_passager }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Type de place :</span>
+                    <span class="info-value badge badge-type-{{ ticket.type_place }}">
+                        {{ ticket.get_type_place_display }}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Statut :</span>
+                    <span class="info-value badge badge-status-{{ ticket.statut }}">
+                        {{ ticket.get_statut_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticket-section">
+            <div class="section-header">
+                <i class="fas fa-route"></i>
+                <h2>Détails du Voyage</h2>
+            </div>
+            <div class="section-content">
+                <div class="voyage-route">
+                    <div class="city-departure">
+                        <div class="city-name">{{ voyage.id_ligne.ville_depart.nom_ville }}</div>
+                        <div class="voyage-time">{{ voyage.heure_depart }}</div>
+                    </div>
+                    
+                    <div class="voyage-separator">
+                        <div class="voyage-duration">~ {{ voyage.id_ligne.duree_estimee }}h</div>
+                        <div class="voyage-line"></div>
+                    </div>
+                    
+                    <div class="city-arrival">
+                        <div class="city-name">{{ voyage.id_ligne.ville_arrivee.nom_ville }}</div>
+                        <div class="voyage-time">{{ voyage.heure_arrivee_prevue }}</div>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Date :</span>
+                    <span class="info-value">{{ voyage.date_voyage|date:"l d F Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticket-section">
+            <div class="section-header">
+                <i class="fas fa-receipt"></i>
+                <h2>Détails de Réservation</h2>
+            </div>
+            <div class="section-content">
+                <div class="info-row">
+                    <span class="info-label">N° Réservation :</span>
+                    <span class="info-value">{{ reservation.numero_reservation }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Client :</span>
+                    <span class="info-value">{{ reservation.id_client.prenom }} {{ reservation.id_client.nom }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Places :</span>
+                    <span class="info-value">{{ reservation.nombre_places }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Prix total :</span>
+                    <span class="info-value">{{ reservation.prix_total }} F CFA</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Statut :</span>
+                    <span class="info-value badge badge-status-{{ reservation.statut }}">
+                        {{ reservation.get_statut_display }}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Émis le :</span>
+                    <span class="info-value">{{ ticket.date_emission|date:"d/m/Y H:i" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ticket-qrcode">
+            <img src="{% static 'reservations/images/qrcode-sample.png' %}" alt="QR Code" class="qrcode-img">
+            <div class="qrcode-text">Code de validation</div>
+        </div>
+
+        <div class="ticket-actions">
+            <a href="{% url 'reservations:download_ticket_receipt' ticket.id_ticket %}" class="btn-download">
+                <i class="fas fa-file-pdf"></i> Télécharger PDF
+            </a>
+            <a href="{% url 'reservations:home' %}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ticket-details-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .ticket-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+    
+    .ticket-header h1 {
+        color: #2c3e50;
+        font-size: 1.8rem;
+        margin: 0;
+    }
+    
+    .ticket-header i {
+        margin-right: 10px;
+        color: #3498db;
+    }
+    
+    .ticket-number {
+        background: #2c3e50;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    
+    .ticket-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .ticket-section {
+        padding: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.3rem;
+        color: #2c3e50;
+        margin: 0 0 0 10px;
+    }
+    
+    .section-header i {
+        color: #3498db;
+        font-size: 1.5rem;
+    }
+    
+    .info-row {
+        display: flex;
+        margin-bottom: 1rem;
+    }
+    
+    .info-label {
+        width: 150px;
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+    
+    .info-value {
+        flex: 1;
+    }
+    
+    .badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .badge-type-standard {
+        background: #d6eaf8;
+        color: #3498db;
+    }
+    
+    .badge-type-premium {
+        background: #fef9e7;
+        color: #f39c12;
+    }
+    
+    .badge-status-confirme {
+        background: #d5f5e3;
+        color: #27ae60;
+    }
+    
+    .badge-status-annule {
+        background: #fadbd8;
+        color: #e74c3c;
+    }
+    
+    .badge-status-en_attente {
+        background: #fef9e7;
+        color: #f39c12;
+    }
+    
+    .voyage-route {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .city-departure, .city-arrival {
+        flex: 1;
+    }
+    
+    .city-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .voyage-time {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .voyage-separator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 15px;
+    }
+    
+    .voyage-duration {
+        color: #7f8c8d;
+        font-size: 0.85rem;
+        margin-bottom: 5px;
+    }
+    
+    .voyage-line {
+        width: 100px;
+        height: 2px;
+        background: #3498db;
+        position: relative;
+    }
+    
+    .voyage-line:before {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: -3px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #3498db;
+    }
+    
+    .ticket-qrcode {
+        text-align: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .qrcode-img {
+        width: 150px;
+        height: 150px;
+        background: #f8f9fa;
+        border: 1px solid #eee;
+        padding: 10px;
+    }
+    
+    .qrcode-text {
+        margin-top: 10px;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .ticket-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: 1.5rem;
+    }
+    
+    .btn-download, .btn-back {
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .btn-download {
+        background: #e74c3c;
+        color: white;
+    }
+    
+    .btn-download:hover {
+        background: #c0392b;
+    }
+    
+    .btn-back {
+        background: #7f8c8d;
+        color: white;
+    }
+    
+    .btn-back:hover {
+        background: #6c757d;
+    }
+    
+    .btn-download i, .btn-back i {
+        margin-right: 8px;
+    }
+    
+    @media (max-width: 768px) {
+        .ticket-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .info-row {
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        
+        .voyage-route {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .voyage-separator {
+            flex-direction: row;
+            padding: 10px 0;
+            width: 100%;
+        }
+        
+        .voyage-duration {
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+        
+        .voyage-line {
+            flex: 1;
+            width: auto;
+        }
+        
+        .ticket-actions {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .btn-download, .btn-back {
+            justify-content: center;
+        }
+    }
+    
+    @media print {
+        .ticket-details-container {
+            padding: 0;
+        }
+        
+        .ticket-card {
+            box-shadow: none;
+            border-radius: 0;
+        }
+        
+        .ticket-actions {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}

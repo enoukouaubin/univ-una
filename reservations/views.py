@@ -146,7 +146,7 @@ def client_login(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f"Bienvenue, {user.prenom} {user.nom} !")
-                return redirect('reservations:home')
+                return redirect('reservations:search_trips')
             else:
                 messages.error(request, "Email ou mot de passe incorrect.")
     else:
@@ -339,7 +339,7 @@ def download_ticket_receipt(request, ticket_id):
         elements.append(Paragraph("Détails Financiers & Statut", subtitle_style))
         financial_status_data = [
             ['Prix Unitaire', f"{reservation.prix_unitaire:.2f} F CFA", 'Statut du Ticket', ticket.statut.title()],
-            ['Prix Total', f"{reservation.prix_total:.2f} F CFA", 'Date d\'Émission', ticket.date_emission.strftime('%d/%m/%Y %H:%M')]
+            ['Prix Total', f"{reservation.prix_total:.2f} F CFA", 'Date d\'Émission',  ticket.date_emission.strftime('%d/%m/%Y à %H:%M')]
         ]
         financial_status_table = Table(financial_status_data, colWidths=[5.5*cm, 5*cm, 5.5*cm, 5*cm])
         financial_status_table.setStyle(TableStyle([

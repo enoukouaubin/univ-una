@@ -52,7 +52,9 @@
     </div>
     {% else %}
     <div class="no-reservations">
-        <p>Aucune réservation trouvée</p>
+   <p class="message-confiance">
+   Réservez votre ticket en ligne en toute sécurité avec Trans : rapide, fiable et sans frais cachés. Votre place est garantie !
+</p>
     </div>
     {% endif %}
 </div>
@@ -167,6 +169,40 @@
         border-radius: 8px;
         color: #7f8c8d;
     }
+
+    .message-confiance {
+  background: linear-gradient(135deg, #e9fce8, #d2f8d2);
+  border-left: 5px solid #28a745;
+  padding: 20px 25px;
+  border-radius: 10px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1.1rem;
+  color: #2f5132;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fadeIn 1s ease-in-out;
+  max-width: 800px;
+  margin: 20px auto;
+  line-height: 1.6;
+}
+
+.message-confiance .icon {
+  font-size: 1.5rem;
+  margin-right: 8px;
+}
+
+.message-confiance .souligner {
+  display: inline-block;
+  margin-top: 8px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #1c3f1f;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
     @media (max-width: 768px) {
         .reservation-table th,
